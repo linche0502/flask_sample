@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+
+{% endblock %}
+
+
+{% block main %}
+<main class="container-fluid d-flex flex-column w-100 h-100">
+    <div class="row pt-2 justify-content-center" style="flex-shrink:0;">
+        <select id="cameraSelect" class="form-select text-center w-fit">
+            <option value="">Select camera</option>
+        </select>
+    </div>
+    <div class="row py-2" style="flex:1 1 auto;">
+        <div class="col text-center">
+            <video class="h-100" style="max-width:100%; max-height:100%;" id="video" autoplay></video>
+            <canvas id="canvas" class="d-none"></canvas>
+        </div>
+    </div>
+    
+</main>
+
+<script>
+    var streaming= false;
+    // 抓到頁面中負責顯示鏡頭畫面的元素
+    const video = document.querySelector('#video');
+    let canvas = document.querySelector("#canvas");
+    // 鏡頭片源設定
+    const constraints = {
+        audio: false,
+        video: {
+            width: {
+                min: 1280,
+                ideal: 1920,
+                max: 2560,
+            },
+            height: {
+                min: 720,
+                ideal: 1080,
+                max: 1440
+            },
+            //開前鏡頭
+            facingMode: "user"
+        }
+    };
+    // 串流function
+    function startStream(){
+        // navigator.mediaDevices可以讓瀏覽器開啟相機
+        navigator.mediaDevices.getUserMedia({ video: constraints }).then((stream) => {
+            // start stream
+            video.srcObject = stream;
+            video.play();
+            streaming= true;
+        });
+    }
+    
+    // 如果設備沒問題的話，就開啟鏡頭，並有影到畫面上
+    if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
+        startStream();
+        
+        // 設定選擇鏡頭的選單裡的選項
+        navigator.mediaDevices.enumerateDevices().then((devices) => {
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            const options = videoDevices.map(videoDevice => {
+                return `<option value="${videoDevice.deviceId}">${videoDevice.label}</option>`;
+            });
+            document.querySelector("#cameraSelect").innerHTML = options.join('');
+        });
+        // 切換鏡頭
+        document.querySelector("#cameraSelect").addEventListener('change', () => {
+            constraints.deviceId= document.querySelector("#cameraSelect").value;
+            startStream();
+        })
+    }
+    
+    // 用頁面中的canvas元素記錄video元素目前的畫面，並發送至"/login/compare"
+    function sendVideoShot(){
+        // 調整canvas的長寬比例，以符合video串流進來的影片的長寬比
+        var aspect_ratio= video.offsetWidth/ video.offsetHeight;
+        // 把畫質縮到大約350*250左右
+        canvas.width= 600* aspect_ratio/(aspect_ratio+1);
+        canvas.height= 600* 1/(aspect_ratio+1);
+        // 將video上的畫面等比複製到canvas上
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        // data url of the image(以編碼形式)
+        var image_data_url = canvas.toDataURL('image/jpeg');
+        var form = new FormData();
+        // 使用Django作為伺服器時，要傳POST的話，必須多給一個csrfmiddlewaretoken的值，才能通過Django的驗證確保安全性。flask則不需要這個步驟
+        // form.append("csrfmiddlewaretoken", "{{ csrf_token }}");
+        form.append('imageData', image_data_url);
+        fetch("/login/compare", { method: "POST", body: form }).then(response => response.json()).then(response => {
+            if(response["result"] != null){
+                window.location.href= "/chat/"+ response["result"];
+            }
+        });
+    }
+    // 每2秒像伺服器發送截圖，頻率太高的話可能會直接導致伺服器直接崩潰
+    window.setInterval(() => {
+        if(streaming){
+            sendVideoShot();
+        }else{
+            console.log("not start yet")
+        }
+    }, 2000);
+
+</script>
+{% endblock %}

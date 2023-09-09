@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<style>
+    .text-bg{
+        background-color:#80808050;
+        border-radius: 0.5em;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+</style>
+{% endblock %}
+
+
+{% block main %}
+<main class="container-fluid d-flex flex-column w-100 h-100">
+    <div class="row pt-2 justify-content-center border-bottom fs-2" style="flex-shrink:0;">
+        Hello {{ user_name }} !
+    </div>
+    <div class="row py-2" style="flex:1 1 auto;">
+        <div class="col container-fluid d-flex flex-column h-100">
+            <!-- record block -->
+            <div class="row overflow-auto" style="flex-grow:1;">
+                <div class="container-fluid" id="chatBlock">
+                </div>
+            </div>
+            <!-- send message block -->
+            <div class="row">
+                <form id="sendMsgBlock" class="col container-fluid bg-light border-1">
+                    <div class="row p-1">
+                        <textarea id="chatMsg" name="msg" class="form-control my-2"></textarea>
+                    </div>
+                    <div class="row justify-content-end px-1">
+                        <button id="sendMsgBtn" type="button" class="btn btn-outline-dark w-fit">送出</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    // 新增訊息function
+    function addMsg(msg, type){
+        // 建立新元素(裝文字方塊的container)
+        var newMsgElement = document.createElement('div');
+        if (type == "send") {
+            newMsgElement.classList.add('row', 'text-break', 'align-items-center', 'justify-content-end', 'text-end', "fs-4", 'ps-5', 'py-1');
+        } else {
+            newMsgElement.classList.add('row', 'text-break', 'align-items-center', 'justify-content-start', 'text-start', "fs-4", 'pe-5', 'py-1');
+        }
+        // 將此container放入chatBlock
+        document.querySelector('#chatBlock').appendChild(newMsgElement);
+        // 建立新元素(文字方塊)
+        var textSpan = document.createElement("span");
+        textSpan.classList.add("w-fit", "text-bg", "white-space-break");
+        // 設定此文字方塊的文字內容
+        textSpan.textContent = msg;
+        // 將此文字方塊加到剛剛新增的container內
+        newMsgElement.appendChild(textSpan);
+    }
+    
+    
+    // 取得之前的對話紀錄
+    var msgs = JSON.parse('{{ dialogue |safe }}');
+    msgs.forEach(msg => {
+        addMsg(msg[0], msg[1]);
+    });
+    
+    // 訊息發送按鈕按下
+    document.querySelector("#sendMsgBtn").addEventListener("click", () => {
+        // 抓到輸入框的資料
+        var msg= document.querySelector("#chatMsg").value;
+        // 如果輸入框內有非空白的內容，再繼續下面的動作
+        if(msg.trim()){
+            var params= {
+                method: "POST",
+                body: new FormData(document.querySelector("#sendMsgBlock"))
+            };
+            // 清空輸入框
+            document.querySelector("#chatMsg").value = "";
+            fetch("/chat/send/{{ user_id }}", params).then(response => response.json()).then(response => {
+                if(response["response"]){
+                    addMsg(msg, "send");
+                    addMsg(response["response"], "response");
+                }
+            }).catch(e => {
+                alert("發送錯誤!");
+            });
+        }
+    });
+</script>
+{% endblock %}

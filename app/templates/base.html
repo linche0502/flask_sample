@@ -1,0 +1,37 @@
+<html>
+    <html lang="zh-Hant-TW">
+    
+    <head>
+        {% block head %}
+        <meta charset="UTF-8">
+    
+        <title>{{ title }}</title>
+        <link rel="icon" type="image/x-icon" href="/static/image/favicon.png">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
+        <link href="/static/css/base.css" rel="stylesheet">
+        <script src="/static/js/tools.js"></script>
+        
+        {% endblock %}
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-xl navbar-light bg-dark position-absolute w-100" style="z-index:100;">
+            <div class="container-fluid">
+                <a class="navbar-brand text-light fw-bolder fs-1" href="/">Hello Flask!</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-xl-0">
+                        <li class="nav-item">
+                            <a class="nav-link active text-light fw-bolder" aria-current="page" href="/login">chatGPT</a>
+                        </li>
+                        
+                </div>
+            </div>
+        </nav>
+        {% block main %}
+        
+        {% endblock %}
+    </body>
+</html>

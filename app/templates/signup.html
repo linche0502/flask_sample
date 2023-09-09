@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<style>
+    td{
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        text-align: center;
+    }
+</style>
+<script>
+    if("{{ errorMsg }}"!=""){
+        alert("{{ errorMsg }}");
+    }
+</script>
+{% endblock %}
+
+
+{% block main %}
+<main class="container-fluid">
+    <div class="row py-4">
+        <h1 class="text-center">註冊</h1>
+    </div>
+    <form class="row justify-content-center" action="/signup/insert" method="POST" enctype="multipart/form-data">
+        <table class="w-fit">
+            <tr>
+                <td class="fs-4 px-3">姓名: </td>
+                <td><input class="form-control" name="name"></td>
+            </tr>
+            <tr>
+                <td class="fs-4 px-3">照片: </td>
+                <td><input class="form-control" type="file" accept=".jpg, .JPG, .jpeg, .JPEG, .png, .PNG, .gif, .GIF" name="imageFile"></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button class="btn btn-outline-dark" type="submit">送出</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</main>
+{% endblock %}

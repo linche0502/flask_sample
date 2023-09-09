@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+
+{% endblock %}
+
+
+{% block main %}
+<main class="container-fluid">
+    <div class="row pt-5">
+        <div class="col text-center">
+            <a href="/signup" class="btn btn-outline-dark w-fit">註冊</a>
+        </div>
+        <div class="col text-center">
+            <a href="/login" class="btn btn-outline-dark w-fit">登入</a>
+        </div>
+    </div>
+</main>
+
+{% endblock %}
