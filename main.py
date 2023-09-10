@@ -21,5 +21,6 @@ if __name__ == "__main__":
     print("http://"+ ip)
     # app.run(ip, 80, debug=True, threaded=True)
     # 使用臨時憑證來跑有加密的https。避免使用http連線時，外網手機因為安全性問題，而無法開啟鏡頭的問題。(使用臨時簽證時，出現警告就按'進階'->'繼續前往192.168.x.x')
+    # print("https://"+ ip)
     # app.run(ip, 443, debug=True, threaded=True, ssl_context='adhoc')
     
