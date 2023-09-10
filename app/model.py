@@ -71,7 +71,10 @@ def insertData(tableName, data:dict):
     
     values= list(data.values())
     for i,value in enumerate(values):
+        # SQLite
         if type(value)==str: values[i]="'"+ value.replace("'","''")+ "'"
+        # MySQL
+        # if type(value)==str: values[i]="'"+ value.replace("'","\\'")+ "'"
         elif type(value)==int: values[i]= str(value)
     cursor.execute(f"INSERT INTO {tableName} ({','.join(data.keys())}) VALUES ({','.join(values)});")
     new_data_id= cursor.lastrowid
