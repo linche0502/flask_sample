@@ -2,7 +2,13 @@
 
 {% block head %}
 {{ super() }}
-
+<style>
+    video{
+    transform: rotateY(180deg);
+    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+    -moz-transform:rotateY(180deg); /* Firefox */
+}
+</style>
 {% endblock %}
 
 
@@ -15,7 +21,7 @@
     </div>
     <div class="row py-2" style="flex:1 1 auto;">
         <div class="col text-center">
-            <video class="h-100" style="max-width:100%; max-height:100%;" id="video" autoplay></video>
+            <video class="h-100" style="max-width:100%; max-height:100%;" id="video" autoplay playsinline></video>
             <canvas id="canvas" class="d-none"></canvas>
         </div>
     </div>
@@ -56,7 +62,7 @@
         });
     }
     
-    // 如果設備沒問題的話，就開啟鏡頭，並有影到畫面上
+    // 如果瀏覽器支援的話
     if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
         startStream();
         
@@ -78,7 +84,7 @@
     // 用頁面中的canvas元素記錄video元素目前的畫面，並發送至"/login/compare"
     function sendVideoShot(){
         // 調整canvas的長寬比例，以符合video串流進來的影片的長寬比
-        var aspect_ratio= video.offsetWidth/ video.offsetHeight;
+        var aspect_ratio= video.videoWidth / video.videoHeight;
         // 把畫質縮到大約350*250左右
         canvas.width= 600* aspect_ratio/(aspect_ratio+1);
         canvas.height= 600* 1/(aspect_ratio+1);

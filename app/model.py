@@ -136,6 +136,7 @@ def compareFace(fileCode):
                 feature2= getFeature(img)
                 # 相減以取得現在偵測到的相片和user_images資料夾及裡面的相片的特徵的歐式距離
                 dist= np.linalg.norm(feature1- feature2)
+                print(dist)
                 # 如果特徵相差不大(暫定<0.3)，則return出檔案名稱去除附檔名的部分(即為uesr_id)
                 if dist < 0.3:
                     return fileName.split(".")[0]
